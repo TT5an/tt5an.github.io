@@ -3,119 +3,258 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#151519">
-  <meta name="description" content="TT5an 的图形编程主页。从 DirectX 12 绘制纹理，到 Vulkan 渲染示例与 Piccolo 游戏引擎源码。">
-  <title>TT5an · 图形编程</title>
+  <meta name="theme-color" content="#f7f6f1">
+  <meta name="description" content="TT5an 的个人主页。在交互作品《光的地形》中，切换沙丘、山脊与潮汐，改变一幅风景里的日照。">
+  <title>TT5an · 光的地形</title>
   <style>
-    :root { color-scheme: dark; --paper: #151519; --ink: #f4f0ea; --muted: #bdb8b7; --line: #423c40; --accent: #ffa485; }
+    :root {
+      color-scheme: light;
+      --paper: #f7f6f1;
+      --ink: #232621;
+      --muted: #565a52;
+      --rule: #c9cbc0;
+      --red: #b8462e;
+      font-family: "Inter", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    }
     * { box-sizing: border-box; }
-    html { background: var(--paper); }
-    body { margin: 0; color: var(--ink); font: 1rem/1.65 "Inter", "Microsoft YaHei", system-ui, sans-serif; }
-    .wrap { width: min(68rem, 90%); margin: auto; }
-    header { border-bottom: 1px solid var(--line); }
-    nav, footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-    nav { padding: 1.1rem 0; }
-    a { color: inherit; text-underline-offset: .3em; }
-    a:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
-    a:hover { color: var(--accent); }
-    .name { font-size: 1.25rem; font-weight: 750; letter-spacing: -.05em; }
-    .name::before { content: ''; display: inline-block; width: .75rem; height: .75rem; margin-right: .6rem; background: var(--accent); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
-    .hero { display: grid; grid-template-columns: 4fr 5fr; align-items: center; gap: clamp(1rem, 5vw, 5rem); padding: clamp(3rem, 7vw, 6rem) 0; }
-    h1, h2, h3, p { margin: 0; }
-    h1 { font: 550 clamp(4.3rem, 11vw, 8.5rem)/1 "Inter", system-ui, sans-serif; letter-spacing: -.08em; }
-    .subtitle { margin: 1rem 0 .6rem; font-size: 1.55rem; font-weight: 650; }
-    .intro, .blurb, footer { color: var(--muted); }
-    .art { margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: .65rem; background: radial-gradient(ellipse at 50% 65%, #32252c, #1d1b20 76%); }
-    canvas { width: 100%; max-height: 23rem; display: block; object-fit: contain; }
-    figcaption { padding: .65rem 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .875rem; }
-    h2 { margin-bottom: 1rem; font-size: 1.4rem; }
-    article { display: grid; grid-template-columns: minmax(12rem, 1fr) 2fr auto; align-items: baseline; gap: 1.5rem; padding: 1.5rem 0; border-top: 1px solid var(--line); }
-    h3 { font-size: 1.25rem; }
-    article a { color: var(--accent); }
-    footer { margin-top: 3rem; padding: 1.2rem 0; border-top: 1px solid var(--line); font-size: .9rem; }
-    @media (max-width: 44rem) {
-      .hero { grid-template-columns: 1fr; gap: 1.8rem; }
-      article { grid-template-columns: 1fr; gap: .4rem; }
-      article a { justify-self: start; }
+    body { margin: 0; color: var(--ink); background: var(--paper); }
+    .page { width: min(84rem, 90%); margin-inline: auto; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 0; border-bottom: 1px solid var(--rule); }
+    .signature { display: inline-flex; align-items: center; gap: .65rem; font: 700 1.65rem/1 "Inter", system-ui, sans-serif; letter-spacing: -.075em; }
+    .mark { display: inline-flex; align-items: center; gap: 3px; transform: skewX(-18deg); }
+    .mark i { width: 4px; height: 13px; background: var(--red); }
+    .mark i:nth-child(2) { height: 23px; }
+    .mark i:last-child { height: 17px; }
+    a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .3em; }
+    a:hover { color: var(--red); }
+    a:focus-visible, input:focus-visible { outline: 2px solid var(--red); outline-offset: 5px; }
+    .profile { display: inline-flex; align-items: center; padding: .5rem .12rem; font-size: .95rem; }
+    .intro { display: grid; grid-template-columns: 1.3fr 1fr; align-items: end; gap: 3rem; padding: clamp(2.2rem,5vw,4.7rem) 0 clamp(1.7rem,3.5vw,3.1rem); }
+    h1, p, figure { margin: 0; }
+    h1 { font-size: clamp(3.6rem,7.2vw,6.6rem); font-weight: 800; line-height: 1.12; letter-spacing: -.085em; }
+    h1 span { color: var(--red); }
+    .intro-copy { max-width: 28rem; justify-self: end; }
+    .hello { font-size: clamp(1.02rem,1.6vw,1.28rem); font-weight: 650; margin-bottom: .38rem; }
+    .about { font-size: 1rem; line-height: 1.75; color: var(--muted); }
+    .studio { margin: 0 0 2.6rem; }
+    .scene { position: relative; overflow: hidden; isolation: isolate; width: 100%; height: clamp(20rem,32vw,28rem); background: linear-gradient(#edd1b5,#f7dcaf); }
+    .scene::before { content: ""; position: absolute; top: 23%; right: 21%; width: 12%; aspect-ratio: 1; border-radius: 50%; background: #d95634; }
+    .scene::after { content: ""; position: absolute; inset: 38% -18% -40%; border-radius: 55% 70% 0 0; background: repeating-linear-gradient(8deg,#8b5c61 0 2px,#bf8180 3px 5px); transform: rotate(-7deg); }
+    canvas { display: block; position: relative; z-index: 1; width: 100%; height: 100%; }
+    .controls { border-bottom: 1px solid var(--rule); padding: 1.06rem 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.2rem 2.2rem; }
+    .controls[hidden] { display: none; }
+    fieldset { display: flex; align-items: center; padding: 0; margin: 0; border: 0; gap: .25rem; min-width: 0; }
+    .control-label { font-size: .92rem; color: var(--muted); }
+    .terrain-label { margin-right: .7rem; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; clip-path: inset(50%); overflow: hidden; white-space: nowrap; }
+    .choice { cursor: pointer; }
+    .choice span { display: inline-block; padding: .54rem 1rem; font-size: 1rem; border: 1px solid transparent; border-radius: 2rem; }
+    .choice input:checked + span { background: var(--ink); color: var(--paper); }
+    .choice input:focus-visible + span { outline: 2px solid var(--red); outline-offset: 2px; }
+    .choice:hover input:not(:checked) + span { border-color: var(--rule); }
+    .sun-control { display: flex; align-items: center; gap: .8rem; }
+    .sun-control input { width: clamp(6rem,13vw,12rem); margin: 0; accent-color: var(--red); cursor: pointer; }
+    output { min-width: 3ch; font: .95rem/1.2 "IBM Plex Mono", Consolas, monospace; font-variant-numeric: tabular-nums; }
+    @media (max-width: 46rem) {
+      .page { width: 91%; }
+      header { padding-block: .85rem; }
+      .intro { grid-template-columns: 1fr; gap: 1rem; }
+      .intro-copy { justify-self: start; }
+      .scene { height: clamp(17rem,66vw,24rem); }
+      .controls { align-items: flex-start; gap: .75rem; }
+    }
+    @media (max-width: 34rem) {
+      .controls { flex-direction: column; }
+      .sun-control { width: 100%; padding: .5rem 0; }
+      .sun-control input { flex: 1; }
+    }
+    @media (forced-colors: active) {
+      .choice input:checked + span { outline: 2px solid Highlight; }
     }
   </style>
 </head>
 <body>
-  <header><nav class="wrap" aria-label="主导航"><span class="name">TT5an</span><a href="https://github.com/TT5an">GitHub 主页</a></nav></header>
-  <main class="wrap">
-    <section class="hero" aria-labelledby="title">
-      <div>
-        <h1 id="title" lang="en">TT5an</h1>
-        <p class="subtitle">图形编程</p>
-        <p class="intro">从画出第一个矩形，到读懂游戏引擎的渲染代码。这里整理了三个可以动手尝试的入口。</p>
+  <div class="page">
+    <header>
+      <div class="signature" aria-label="TT5an"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>TT5an</div>
+      <a class="profile" href="https://github.com/TT5an" aria-label="TT5an 的 GitHub 个人资料">GitHub</a>
+    </header>
+    <main>
+      <div class="intro">
+        <h1>光的地形<span>。</span></h1>
+        <div class="intro-copy">
+          <p class="hello">你好，我是 TT5an。</p>
+          <p class="about">这片风景由代码绘成。选一种地貌，调一调太阳的高度，看看光会落在哪里。</p>
+        </div>
       </div>
-      <figure class="art">
-        <canvas width="960" height="560" role="img" aria-label="由暖橙色经纬线绘成的倾斜三维圆环">三维圆环的线框投影</canvas>
-        <figcaption>圆环的线框投影</figcaption>
+      <figure class="studio" aria-label="光的地形，交互风景画">
+        <div class="scene">
+          <canvas role="img" aria-label="一轮橙红色的太阳照在层叠的沙丘上。"></canvas>
+        </div>
+        <div class="controls" hidden>
+          <fieldset>
+            <legend class="sr-only">选择地貌</legend>
+            <span aria-hidden="true" class="control-label terrain-label">地貌</span>
+            <label class="choice"><input class="sr-only" type="radio" name="landform" value="dunes" checked><span>沙丘</span></label>
+            <label class="choice"><input class="sr-only" type="radio" name="landform" value="peaks"><span>山脊</span></label>
+            <label class="choice"><input class="sr-only" type="radio" name="landform" value="tide"><span>潮汐</span></label>
+          </fieldset>
+          <div class="sun-control">
+            <label for="sun" class="control-label">太阳高度</label>
+            <input id="sun" type="range" min="5" max="75" value="26" aria-valuetext="26 度">
+            <output id="degrees" for="sun" aria-hidden="true">26°</output>
+          </div>
+        </div>
+        <noscript><p>启用 JavaScript 可以切换地貌和调整日照。</p></noscript>
       </figure>
-    </section>
-    <section aria-labelledby="resources">
-      <h2 id="resources">从这里开始</h2>
-      <article>
-        <h3>DirectX 12</h3>
-        <p class="blurb">从 DrawRectangle 和 DrawTexture 两节入手，先画出一个矩形，再为它贴上纹理。</p>
-        <a href="https://github.com/TT5an/DX12-Quick-Tutorial" aria-label="阅读 DirectX 12 快速教程">阅读教程</a>
-      </article>
-      <article>
-        <h3>Vulkan</h3>
-        <p class="blurb">按渲染技术查找 C++ 示例，看看延迟渲染、物理材质和计算着色器分别怎么实现。</p>
-        <a href="https://github.com/TT5an/Vulkan" aria-label="浏览 Vulkan C++ 示例">浏览示例</a>
-      </article>
-      <article>
-        <h3>Piccolo Engine</h3>
-        <p class="blurb">结合 GAMES104 课程阅读小型游戏引擎的源码，把单个渲染示例放回完整引擎中理解。</p>
-        <a href="https://github.com/TT5an/Piccolo" aria-label="查看 Piccolo Engine 源码">查看源码</a>
-      </article>
-    </section>
-  </main>
-  <footer class="wrap"><span>TT5an</span><a href="https://github.com/TT5an?tab=repositories">全部公开仓库</a></footer>
+    </main>
+  </div>
   <script>
-    // Project the mesh once. Nearer faces cover the wireframe on the back.
-    const canvas = document.querySelector("canvas");
-    const ctx = canvas.getContext("2d");
-    function project(u, v) {
-      const radius = 1.52 + .60 * Math.cos(v);
-      const x = radius * Math.cos(u);
-      const y = radius * Math.sin(u);
-      const z = .60 * Math.sin(v);
-      const height = y * .53 - z * .85;
-      const depth = y * .85 + z * .53;
-      return {
-        x: 480 + 166 * (x * .94 - height * .34),
-        y: 280 + 166 * (x * .34 + height * .94),
-        depth
-      };
-    }
-    function drawMesh() {
-      const faces = [];
-      const turn = Math.PI * 2;
-      for (let i = 0; i < 48; i++) {
-        for (let j = 0; j < 20; j++) {
-          const u = i * turn / 48, v = j * turn / 20;
-          const nextU = (i + 1) * turn / 48, nextV = (j + 1) * turn / 20;
-          const points = [project(u, v), project(nextU, v), project(nextU, nextV), project(u, nextV)];
-          faces.push({ points, depth: points.reduce((sum, p) => sum + p.depth, 0) / 4 });
+    (() => {
+      const canvas = document.querySelector("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const palettes = {
+        dunes: {
+          label: "沙丘", sky: ["#f0c4a8", "#f8dfb4"], sun: "#dc5634",
+          ridges: ["#d59384", "#bc777d", "#9a627a", "#654b72", "#323457", "#202640"],
+          hatch: ["#efbea0", "#e4a89a", "#d297a1", "#ac849c", "#787694", "#63657b"]
+        },
+        peaks: {
+          label: "山脊", sky: ["#b1c4de", "#f6daca"], sun: "#f49b72",
+          ridges: ["#99a9c2", "#8492b5", "#667ba1", "#515f88", "#38466b", "#242d50"],
+          hatch: ["#d3ced9", "#c9c8dc", "#b2b9d3", "#97a6c8", "#8592b2", "#697491"]
+        },
+        tide: {
+          label: "潮汐", sky: ["#add0c9", "#f9dfb2"], sun: "#ef8458",
+          ridges: ["#94b9ab", "#73a295", "#528b85", "#3a7274", "#2a5867", "#183e50"],
+          hatch: ["#d3d5b6", "#b7d0b5", "#9fcab4", "#8ebbb0", "#6fa4a1", "#579096"]
         }
+      };
+      const sun = document.getElementById("sun");
+      const degrees = document.getElementById("degrees");
+      const controls = document.querySelector(".controls");
+      const sin = Math.sin;
+      let grain;
+      let frame = 0;
+
+      function paperGrain() {
+        const tile = document.createElement("canvas");
+        tile.width = tile.height = 160;
+        const brush = tile.getContext("2d");
+        const pixels = brush.createImageData(160, 160);
+        let seed = 14631;
+        for (let i = 0; i < pixels.data.length; i += 4) {
+          seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+          const light = (seed & 256) ? 255 : 0;
+          pixels.data.set([light, light, light, (seed >>> 26) % 22], i);
+        }
+        brush.putImageData(pixels, 0, 0);
+        return ctx.createPattern(tile, "repeat");
       }
-      faces.sort((a, b) => a.depth - b.depth);
-      for (const { points, depth } of faces) {
+
+      function ridgeHeight(mode, x, band) {
+        const phase = [.2, 1.5, 3.8, .5, 2.2, 4.6][band];
+        const base = [.54, .59, .65, .73, .83, .99][band];
+        const u = x * (5.5 + band * .16) + phase;
+        if (mode === "tide") {
+          return base + .054 * sin(1.24 * u) + .026 * sin(2.4 * u + band) + .009 * sin(5.7 * u);
+        }
+        if (mode === "peaks") {
+          const angular = t => Math.asin(sin(t)) * (2 / Math.PI);
+          return base - .035 + .15 * angular(1.64 * u) + .048 * angular(3.63 * u + 1) + .018 * angular(9.2 * u);
+        }
+        return base + .14 * sin(u) + .053 * sin(1.91 * u + .6) + .021 * sin(3.4 * u + 1.8);
+      }
+
+      function draw() {
+        frame = 0;
+        const width = Math.round(canvas.clientWidth);
+        const height = Math.round(canvas.clientHeight);
+        if (!width || !height) return;
+        const scale = Math.min(window.devicePixelRatio || 1, 2);
+        const pixelWidth = Math.round(width * scale), pixelHeight = Math.round(height * scale);
+        if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+          canvas.width = pixelWidth;
+          canvas.height = pixelHeight;
+        }
+        ctx.setTransform(pixelWidth / width, 0, 0, pixelHeight / height, 0, 0);
+        const mode = document.querySelector('input[name="landform"]:checked').value;
+        const palette = palettes[mode];
+        const altitude = (sun.valueAsNumber - 5) / 70;
+        const sky = ctx.createLinearGradient(0, 0, 0, height * .85);
+        sky.addColorStop(0, palette.sky[0]);
+        sky.addColorStop(1, palette.sky[1]);
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, width, height);
+
+        // Change the sky's warmth and the length of the engraved highlights with the sun.
+        ctx.fillStyle = "rgba(255, 226, 184, " + altitude * .34 + ")";
+        ctx.fillRect(0, 0, width, height);
+        const sunY = (.52 - .34 * altitude) * height;
+        const radius = Math.min(height * .146, width * .113);
+        ctx.fillStyle = palette.sun;
         ctx.beginPath();
-        ctx.moveTo(points[0].x, points[0].y);
-        for (const p of points.slice(1)) ctx.lineTo(p.x, p.y);
-        ctx.closePath();
-        ctx.fillStyle = "#2d242a";
+        ctx.arc(width * (.72 - .08 * altitude), sunY, radius, 0, Math.PI * 2);
         ctx.fill();
-        ctx.lineWidth = 1.35;
-        ctx.strokeStyle = `hsl(${18 + depth * 5}, 88%, ${57 + depth * 11}%)`;
-        ctx.stroke();
+
+        const steps = Math.ceil(width / 4);
+        const domain = Math.min(1, width / (height * 1.45));
+        const sample = (x, band) => ridgeHeight(mode, .5 + (x - .5) * domain, band);
+        for (let band = 0; band < palette.ridges.length; band++) {
+          const outline = new Path2D();
+          const crest = [];
+          for (let i = 0; i <= steps; i++) {
+            const y = height * sample(i / steps, band);
+            crest.push(y);
+            if (i === 0) outline.moveTo(0, y);
+            else outline.lineTo(width * i / steps, y);
+          }
+          outline.lineTo(width, height);
+          outline.lineTo(0, height);
+          outline.closePath();
+          ctx.fillStyle = palette.ridges[band];
+          ctx.fill(outline);
+          ctx.save();
+          ctx.clip(outline);
+          ctx.strokeStyle = palette.hatch[band];
+          ctx.lineWidth = .78;
+          const gap = Math.max(2.9, height / 100);
+          const lines = Math.ceil(height * .52 / gap);
+          for (let k = 0; k < lines; k++) {
+            const path = new Path2D();
+            const fall = (k + .5) * gap;
+            for (let i = 0; i <= steps; i++) {
+              const x = i / steps;
+              const twist = sin(x * (7 + band * .5) + band + k * .035);
+              const y = crest[i] + fall * (1.04 + .37 * twist) + .3 * sin(i * .14 + k);
+              if (i === 0) path.moveTo(0, y);
+              else path.lineTo(x * width, y);
+            }
+            ctx.globalAlpha = (.52 + .3 * altitude) * (1 - .67 * k / lines);
+            ctx.stroke(path);
+          }
+          ctx.restore();
+        }
+        grain ||= paperGrain();
+        ctx.fillStyle = grain;
+        ctx.fillRect(0, 0, width, height);
+        canvas.setAttribute("aria-label", palette.label + "风景，太阳高度 " + sun.value + " 度。");
       }
-    }
-    if (ctx) drawMesh();
+
+      function redraw() {
+        if (!frame) frame = requestAnimationFrame(draw);
+      }
+      controls.addEventListener("input", () => {
+        degrees.value = sun.value + "°";
+        sun.setAttribute("aria-valuetext", sun.value + " 度");
+        redraw();
+      });
+      draw();
+      controls.hidden = false;
+      new ResizeObserver(redraw).observe(canvas);
+    })();
   </script>
 </body>
 </html>
